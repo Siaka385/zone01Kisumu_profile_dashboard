@@ -1,11 +1,4 @@
 
-import { renderlogin, rendersignup } from "./authentication/authenticationpage.js";
-import { highlightActiveCategory, LoadDataFromServer, RenderDashboard, initTrendingToggle } from "./forumMainPage/Dashboard.js";
-import { renderPrivateMsgPage } from "./messsages/privatemessage.js";
-import { renderBadRequest, renderInternalServerError, renderNotAllowed, renderPageNotFound } from "./ErrorStatusCode/Error.js";
-import { renderLogout } from "./authentication/logout.js";
-import { connectWebSocket, updateNotificationBadge } from "./messsages/websocket.js";
-
 window.onload = async () => {
 
     function loadScript(scriptUrl) {
@@ -20,7 +13,6 @@ window.onload = async () => {
         });
     }
 
-var IswebsocketStarted=false
     async function checkSession(cat) {
         try {
             let response = await fetch("/check-auth", {
@@ -47,6 +39,8 @@ var IswebsocketStarted=false
         }
         return false;
     }
+
+    
     const routes = {
         "/": {
             render: renderlogin,
@@ -68,11 +62,6 @@ var IswebsocketStarted=false
             script: "../js/forumMainPage/registeredUser.js",
             css: ["../styles/registeredUser.css", "../styles/trending-toggle.css"]
         },
-        "/privatemessages": {
-            render: renderPrivateMsgPage,
-            script: "../js/messsages/message.js",
-            css: "../styles/message.css"
-        },
         "/notfound": {
             render: renderPageNotFound,
             script: "../js/ErrorStatusCode/NotFoundStatusCode.js",
@@ -83,16 +72,12 @@ var IswebsocketStarted=false
             script: "../js/ErrorStatusCode/AccessForbiddenStatusCode.js",
             css: "../styles/Errorpage.css"
         },
+
         "/internalservererror": {
             render: renderInternalServerError,
             script: "../js/ErrorStatusCode/InternalServerErrorStatusCode.js",
             css: "../styles/Errorpage.css"
         },
-        "/badrequest": {
-            render: renderBadRequest,
-            script: "../js/ErrorStatusCode/BadRequestStatusCode.js",
-            css: "../styles/Errorpage.css"
-        }
     };
 
 
@@ -124,79 +109,7 @@ var IswebsocketStarted=false
                 }
                 return;
             }
-            if (path.startsWith("/Dashboard")) {
-                         
-                     if(!IswebsocketStarted){
-                    
-                        connectWebSocket();
-                        IswebsocketStarted=true;
-                     }
-
-                     // Update notification badge
-                     updateNotificationBadge();
-
-                container.style.display = "none";
-                chatcontainer.style.display = "none";
-                app.style.display = "block";
-
-                const queryParams = new URLSearchParams(window.location.search);
-                let selectedCategory = queryParams.get("category");
-
-                if (!selectedCategory) {
-                    if (path != "/Dashboard"){
-                        window.location.href="/notfound"
-                    }else{
-                        app.innerHTML = routes[path].render();
-                        LoadDataFromServer("all");
-                    }
-                } else {
-                    if (performance.getEntriesByType("navigation")[0]?.type === "reload") {
-                        app.innerHTML = routes[path].render();
-                    }
-                    var categoryMap = {
-                        "technology": "technology",
-                        "sports": "sports",
-                        "entertainment": "entertainment",
-                        "news": "news",
-                         "other":"other",
-                        "created_post":"created_post",
-                        "liked":"liked"
-                    };
-                    if (!categoryMap[selectedCategory]) {
-                        window.location.href = "/notfound"
-                        return
-                    }
-
-
-                    LoadDataFromServer(categoryMap[selectedCategory]);
-                }
-
-                highlightActiveCategory(selectedCategory);
-
-                // Initialize trending toggle functionality
-                initTrendingToggle();
-
-            } else if (path.startsWith("/privatemessages")) {
-
-                if(!IswebsocketStarted){
-                    connectWebSocket();
-                    IswebsocketStarted=true;
-                }
-
-                app.style.display = "none"
-                container.style.display = "none";
-                chatcontainer.style.display = "flex"
-
-                chatcontainer.innerHTML = routes[path].render();
-            } else {
-                app.style.display = "none"
-                container.style.display = "block";
-                chatcontainer.style.display = "none";
-
-                container.innerHTML = routes[path].render();
-
-            }
-
+            
             // Remove existing script
             let existingScript = document.querySelector("#dynamicScript");
             if (existingScript) {
