@@ -1,15 +1,9 @@
 
-// Simulated correct credentials
-const correctCredentials = {
-    username: 'demo',
-    password: 'password123'
-};
-
-const loginForm = document.getElementById('loginForm');
-const passwordInput = document.getElementById('password');
-const usernameInput = document.getElementById('username');
-const errorMessage = document.getElementById('errorMessage');
-const successMessage = document.getElementById('successMessage');
+var loginForm = document.getElementById('loginForm');
+var passwordInput = document.getElementById('password');
+var usernameInput = document.getElementById('username');
+var errorMessage = document.getElementById('errorMessage');
+var successMessage = document.getElementById('successMessage');
 
 loginForm.addEventListener('submit', async function(e) {
     e.preventDefault();
@@ -42,7 +36,7 @@ loginForm.addEventListener('submit', async function(e) {
    
         successMessage.classList.add('show');
         setTimeout(() => {
-            alert('Login successful! In a real application, you would be redirected to your dashboard.');
+            window.location.href = "/UserDashboard";
         }, 1000);
    
 });
@@ -91,7 +85,6 @@ async function Jwt(username,password){
    // if (!response.ok) throw new Error('Login failed');
 
     const data = await response.json();
-    console.log(data)
     return data
 }
 
