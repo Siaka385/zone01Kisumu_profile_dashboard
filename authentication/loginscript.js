@@ -5,6 +5,12 @@ var usernameInput = document.getElementById('username');
 var errorMessage = document.getElementById('errorMessage');
 var successMessage = document.getElementById('successMessage');
 
+const AUTH_TOKEN_KEY = 'auth_token';
+const AUTH_USER_ID_KEY = 'auth_user_id';
+export var token;
+export var userid;
+export var Authentication=false;
+
 loginForm.addEventListener('submit', async function(e) {
     e.preventDefault();
     
@@ -34,12 +40,34 @@ loginForm.addEventListener('submit', async function(e) {
         return
        }
    
+        token=jwttoken;
+        userid=ParseUserId(jwttoken);
+        localStorage.setItem(AUTH_TOKEN_KEY, token);
+        localStorage.setItem(AUTH_USER_ID_KEY, userid);
+        authentication=true;
+
         successMessage.classList.add('show');
         setTimeout(() => {
             window.location.href = "/UserDashboard";
         }, 1000);
    
 });
+
+function ParseUserId(token) {
+    const tokenParts = token.split('.');
+    if (tokenParts.length !== 3) {
+        console.error('Invalid token format');
+        return null;
+    }
+
+    const payload = JSON.parse(atob(tokenParts[1]));
+    if (!payload.sub) {
+        console.error('Token does not contain user ID (sub)');
+        return null;
+    }
+
+    return payload.sub;
+}
 
 // Clear error when user starts typing
 passwordInput.addEventListener('input', function() {
