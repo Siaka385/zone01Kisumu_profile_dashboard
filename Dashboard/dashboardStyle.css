@@ -6,13 +6,13 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #000 0%, #764ba2 100%);
     min-height: 100vh;
     color: #333;
 }
 
 .nav {
-    background: linear-gradient(135deg, #ff6b35, #f7931e);
+    background: linear-gradient(135deg, #7356b1, #7354ae);;
     width: 100%;
     padding: 15px 30px;
     display: flex;
@@ -97,7 +97,7 @@ body {
 }
 
 .cardHead {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    background: linear-gradient(135deg, #4facfe 0%, #71489b 100%);
     color: white;
     padding: 20px;
     font-weight: 600;

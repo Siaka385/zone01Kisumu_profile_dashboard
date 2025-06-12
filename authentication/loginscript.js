@@ -1,5 +1,4 @@
 
-export var authentication=false
 // Wait for DOM elements to be available
 function initializeLoginScript() {
     var loginForm = document.getElementById('loginForm');
@@ -16,6 +15,18 @@ function initializeLoginScript() {
 
     const AUTH_TOKEN_KEY = 'auth_token';
     const AUTH_USER_ID_KEY = 'auth_user_id';
+    const token = localStorage.getItem(AUTH_TOKEN_KEY);
+    const userId = localStorage.getItem(AUTH_USER_ID_KEY);
+
+if (token && userId){
+     // Call the global function to show dashboard
+     if (window.showDashboard) {
+        window.showDashboard();
+    }
+    return
+
+}
+
 
     loginForm.addEventListener('submit', async function(e) {
     e.preventDefault();
@@ -30,6 +41,7 @@ function initializeLoginScript() {
     successMessage.classList.remove('show');
 
        let jwttoken=await  Jwt(username,password)
+       console.log(jwttoken)
        if (jwttoken.error){
         usernameInput.classList.add('error');
         passwordInput.classList.add('error');
@@ -50,11 +62,13 @@ function initializeLoginScript() {
         var userid = ParseUserId(jwttoken);
         localStorage.setItem(AUTH_TOKEN_KEY, token);
         localStorage.setItem(AUTH_USER_ID_KEY, userid);
-        authentication=true
 
         successMessage.classList.add('show');
         setTimeout(() => {
-            window.location.href = "/UserDashboard";
+            // Call the global function to show dashboard
+            if (window.showDashboard) {
+                window.showDashboard();
+            }
         }, 1000);
 
 });

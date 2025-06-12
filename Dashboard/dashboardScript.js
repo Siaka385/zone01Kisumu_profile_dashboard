@@ -23,9 +23,11 @@ const userData = {
 
 function handleLogout() {
     if (confirm('Are you sure you want to log out?')) {
-        alert('Logging out... Redirecting to login page.');
-        // In a real application, you would redirect to the login page
-        // window.location.href = '/login';
+        alert('Logging out...');
+
+        localStorage.removeItem('auth_token');
+        localStorage.removeItem('auth_user_id');
+        
     }
 }
 
