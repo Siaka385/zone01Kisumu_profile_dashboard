@@ -2,15 +2,17 @@ import {LoginPage} from "./authentication/loginComponent.js";
 import {DashboardComponet} from "./Dashboard/dashboardPage.js";
 
 // Global function to show dashboard (called from login script)
-window.showDashboard = function() {
+window.showDashboard=function() {
     const app = document.querySelector(".app");
-
+    
+    let loginstyle=document.getElementById("loginStyle");
+    if (loginstyle) loginstyle.remove();
+    
+    let loginscript=document.getElementById("loginScript");
+    if (loginscript) loginscript.remove();
+    
     // Replace content with dashboard
     app.innerHTML = DashboardComponet();
-
-let loginstyle=document.getElementById("loginStyle");
-if (loginstyle) loginstyle.remove();
-
 
 
     // Load dashboard CSS
@@ -27,6 +29,35 @@ if (loginstyle) loginstyle.remove();
     document.head.appendChild(script);
 };
 
+
+window.showLogin=function() {
+    const app = document.querySelector(".app");
+    
+    
+    let dashboardStyle=document.getElementById("dashboardCSS");
+    if (dashboardStyle) dashboardStyle.remove();
+    
+    let dashboardscript=document.getElementById("dashboardScript")
+    if (dashboardscript) dashboardscript.remove();
+    
+    app.innerHTML = LoginPage();
+
+    // Load dashboard CSS
+    const cssLink = document.createElement("link");
+    cssLink.rel = "stylesheet";
+    cssLink.href = "./authentication/loginStyle.css";
+    cssLink.id = "loginStyle";
+    document.head.appendChild(cssLink);
+
+
+
+    // Load dashboard script
+    const script = document.createElement('script');
+    script.src = './authentication/loginscript.js';
+    script.id = "loginScript";
+    document.head.appendChild(script);
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
     const app = document.querySelector(".app");
 
@@ -37,5 +68,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const script = document.createElement('script');
     script.type = 'module';
     script.src = './authentication/loginscript.js';
+    script.id="loginScript"
     document.head.appendChild(script);
 });

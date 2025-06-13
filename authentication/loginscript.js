@@ -41,7 +41,6 @@ if (token && userId){
     successMessage.classList.remove('show');
 
        let jwttoken=await  Jwt(username,password)
-       console.log(jwttoken)
        if (jwttoken.error){
         usernameInput.classList.add('error');
         passwordInput.classList.add('error');

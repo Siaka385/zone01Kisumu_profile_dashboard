@@ -27,7 +27,11 @@ function handleLogout() {
 
         localStorage.removeItem('auth_token');
         localStorage.removeItem('auth_user_id');
-        
+      if (window.showLogin){
+        window.showLogin();
+      }else{
+        console.log("sbkjdbvjczbkjlvbakj ")
+      }
     }
 }
 
