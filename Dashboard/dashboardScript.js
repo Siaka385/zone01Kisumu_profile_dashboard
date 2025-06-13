@@ -346,7 +346,6 @@ async function updateUserData() {
     
 
     // Calculate totals
-    const totalXP = userDatas.xpData[userDatas.xpData.length - 1].value;
     const totalSuccessfulAudits = userDatas.auditData.reduce((sum, data) => sum + data.successful, 0);
 
   
