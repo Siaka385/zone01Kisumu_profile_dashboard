@@ -17,8 +17,10 @@ export function DashboardComponet(){
                     <span>User Profile</span>
                 </div>
                 <div class="cardContent">
-                    <div><strong>Name:</strong> <span id="userName">Teddy</span></div>
-                    <div><strong>Age:</strong> <span id="userAge">20</span></div>
+                    <div><strong>Name:</strong> <span id="Name">Teddy</span></div>
+                    <div><strong>Email:</strong> <span id="useremail">20</span></div>
+                    <div><strong>Gender:</strong> <span id="usergender">20</span></div>
+                    <div><strong>Phone Number:</strong> <span id="phonenumber">20</span></div>
                     <div class="label">Basic Information</div>
                 </div>
             </div>

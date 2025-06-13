@@ -1,8 +1,9 @@
 import {LoginPage} from "./authentication/loginComponent.js";
 import {DashboardComponet} from "./Dashboard/dashboardPage.js";
+//import {fetchUserProfile} from "./query/userdetail.js";
 
 // Global function to show dashboard (called from login script)
-window.showDashboard=function() {
+window.showDashboard=async function() {
     const app = document.querySelector(".app");
     
     let loginstyle=document.getElementById("loginStyle");
@@ -13,6 +14,9 @@ window.showDashboard=function() {
     
     // Replace content with dashboard
     app.innerHTML = DashboardComponet();
+
+// let v=await fetchUserProfile()
+//  console.log(v)
 
 
     // Load dashboard CSS

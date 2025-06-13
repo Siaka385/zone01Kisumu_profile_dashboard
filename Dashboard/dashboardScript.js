@@ -1,6 +1,6 @@
 
 // Dynamic data configuration
-const userData = {
+const userDatas = {
     name: "Teddy",
     age: 20,
     xpData: [
@@ -87,7 +87,7 @@ function createGrid(svg, maxY) {
 
 function createXPChart() {
     const svg = document.getElementById('xpChart');
-    const maxXP = Math.max(...userData.xpData.map(d => d.value));
+    const maxXP = Math.max(...userDatas.xpData.map(d => d.value));
 
     // Clear existing content
     svg.innerHTML = '';
@@ -133,7 +133,7 @@ function createXPChart() {
     let pathData = "M ";
     let areaPath = "M ";
 
-    userData.xpData.forEach((data, index) => {
+    userDatas.xpData.forEach((data, index) => {
         const x = 50 + (index * 50);
         const y = 200 - ((data.value / maxXP) * 160);
 
@@ -165,7 +165,7 @@ function createXPChart() {
     });
 
     // Close area path
-    const lastX = 50 + ((userData.xpData.length - 1) * 50);
+    const lastX = 50 + ((userDatas.xpData.length - 1) * 50);
     areaPath += ` L ${lastX} 200 L 50 200 Z`;
 
     // Area under curve
@@ -187,7 +187,7 @@ function createAuditChart() {
     const cumulativeData = [];
     let cumulative = 0;
 
-    userData.auditData.forEach((data, index) => {
+    userDatas.auditData.forEach((data, index) => {
         cumulative += data.successful;
         cumulativeData.push({
             month: data.month,
@@ -289,17 +289,67 @@ function createAuditChart() {
     svg.appendChild(path);
 }
 
-function updateUserData() {
-    // Update user info
-    document.getElementById('userName').textContent = userData.name;
-    document.getElementById('userAge').textContent = userData.age;
+async function updateUserData() {
+
+
+    import("../query/userdetail.js").then(async({fetchUserProfile})=>{ 
+        
+        const query = `query { 
+                        user {
+                            id
+                            login
+                            email
+                            attrs
+                            
+                        }
+                        
+                    }
+                `;
+                
+                let userdetail=await fetchUserProfile(query)
+                document.getElementById("username").textContent=`${userdetail.data.user[0].login}`
+                document.getElementById('Name').textContent =`${userdetail.data.user[0].attrs.firstName} ${userdetail.data.user[0].attrs.middleName} ${userdetail.data.user[0].attrs.lastName}`;
+                document.getElementById('useremail').textContent=`${userdetail.data.user[0].attrs.email}`;
+                document.getElementById('usergender').textContent=`${userdetail.data.user[0].attrs.gender}`
+                document.getElementById('phonenumber').textContent=`${userdetail.data.user[0].attrs.phone}`
+
+
+                const userXpQuery = `
+                query {
+                  transaction(where: {
+                    _and: [
+                      { eventId: { _eq: 75 } }
+                    ]
+                  }, order_by: { createdAt: desc }) {
+                    amount
+                    createdAt
+                    path
+                    type
+                  }
+                }
+              `;
+              
+                
+                let userXp=await fetchUserProfile(userXpQuery)
+                const totalXps = userXp.data.transaction.reduce((sum, tx) => {
+                    return sum + tx.amount;
+                  }, 0);;
+
+             
+                
+                console.log(totalXps)
+    
+                  // Update card values with animation
+           animateValue('totalXP', 0, totalXps, 1500);
+    })
+
+    
 
     // Calculate totals
-    const totalXP = userData.xpData[userData.xpData.length - 1].value;
-    const totalSuccessfulAudits = userData.auditData.reduce((sum, data) => sum + data.successful, 0);
+    const totalXP = userDatas.xpData[userDatas.xpData.length - 1].value;
+    const totalSuccessfulAudits = userDatas.auditData.reduce((sum, data) => sum + data.successful, 0);
 
-    // Update card values with animation
-    animateValue('totalXP', 0, totalXP, 1500);
+  
     setTimeout(() => {
         animateValue('totalAudits', 0, totalSuccessfulAudits, 1000);
     }, 500);
@@ -313,8 +363,8 @@ function animateValue(elementId, start, end, duration) {
         const elapsed = currentTime - startTime;
         const progress = Math.min(elapsed / duration, 1);
 
-        const currentValue = Math.floor(start + (end - start) * progress);
-        element.textContent = currentValue;
+        const currentValue = (start + (end - start) * progress);
+        element.textContent = currentValue
 
         if (progress < 1) {
             requestAnimationFrame(update);
@@ -325,8 +375,8 @@ function animateValue(elementId, start, end, duration) {
 }
 
 // Initialize dashboard
-function initializeDashboard() {
-    updateUserData();
+async function initializeDashboard() {
+    await updateUserData();
     createXPChart();
     createAuditChart();
 
