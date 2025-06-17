@@ -379,11 +379,11 @@ async function updateUserData() {
                }
 
                      
-
-            console.log(skillsAndAmount)
+               
+          
          
            setTimeout(() => {
-               animateValue('totalAudits', 0, totalSuccessfulAudits, 1000);
+               animateValue('totalAudits', 0, skills.size, 1000);
            }, 500);
     })
 
