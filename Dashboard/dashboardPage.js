@@ -37,7 +37,7 @@ export function DashboardComponet(){
             
             <div id="userAudit" class="card audit-progress">
                 <div class="cardHead">
-                    <span>Audits Completed</span>
+                    <span>skills</span>
                 </div>
                 <div class="cardContent">
                     <div class="value" id="totalAudits">0</div>

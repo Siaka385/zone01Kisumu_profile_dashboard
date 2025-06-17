@@ -1,3 +1,4 @@
+///import { fetchUserProfile } from "../query/userdetail.js";
 
 // Dynamic data configuration
 const userDatas = {
@@ -335,23 +336,58 @@ async function updateUserData() {
                     return sum + tx.amount;
                   }, 0);;
 
-             
-                
-                console.log(totalXps)
+        
     
                   // Update card values with animation
            animateValue('totalXP', 0, totalXps, 1500);
+
+
+           const progress=`
+           query{
+              user {
+                    id
+                    skills: transactions(
+                        where: { type: { _like: "skill_%" } }
+                        order_by: [{ amount: desc }]
+                    ) {
+                        type
+                        amount
+                    }
+                }
+           
+           }`
+           
+       
+           // Calculate totals
+        //   const totalSuccessfulAudits = userDatas.auditData.reduce((sum, data) => sum + data.successful, 0);
+              let totalSuccessfulAudits=await fetchUserProfile(progress)
+                var skills=new Set();
+                     for (var i=0;i<totalSuccessfulAudits.data.user[0].skills.length;i++){
+                            skills.add(totalSuccessfulAudits.data.user[0].skills[i].type)
+                     }
+
+                     var skillsAndAmount=new Map();
+               for(const x of skills){
+            
+                for (var i=0;i<totalSuccessfulAudits.data.user[0].skills.length;i++){
+                    if(totalSuccessfulAudits.data.user[0].skills[i].type === x){
+                        console.log(`${x}:${totalSuccessfulAudits.data.user[0].skills[i].amount}`)
+                        skillsAndAmount.set(x,totalSuccessfulAudits.data.user[0].skills[i].amount)
+                    }
+                }
+
+               }
+
+                     
+
+            console.log(skillsAndAmount)
+         
+           setTimeout(() => {
+               animateValue('totalAudits', 0, totalSuccessfulAudits, 1000);
+           }, 500);
     })
 
-    
-
-    // Calculate totals
-    const totalSuccessfulAudits = userDatas.auditData.reduce((sum, data) => sum + data.successful, 0);
-
-  
-    setTimeout(() => {
-        animateValue('totalAudits', 0, totalSuccessfulAudits, 1000);
-    }, 500);
+   
 }
 
 function animateValue(elementId, start, end, duration) {
