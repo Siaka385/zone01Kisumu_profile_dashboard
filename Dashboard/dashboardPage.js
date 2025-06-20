@@ -54,12 +54,20 @@ export function DashboardComponet(){
                 </svg>
             </div>
             
-            <div class="graph-container">
-                <div class="graph-title">Audit Performance Over Time</div>
-                <svg id="auditChart" viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Chart will be generated dynamically -->
-                </svg>
-            </div>
+            <div class="container-chart">
+        <div class="graph-title">Audit Status Overview</div>
+        
+        <div class="chart-container">
+            <svg id="pieChart" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                <!-- Pie chart will be generated here -->
+            </svg>
+            <div class="tooltip" id="tooltip"></div>
+        </div>
+
+        <div class="legend" id="legend">
+            <!-- Legend items will be generated here -->
+        </div>
+    </div>
         </div>
     </div>`
 }
