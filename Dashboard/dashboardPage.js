@@ -48,7 +48,7 @@ export function DashboardComponet(){
         
         <div class="graphs">
             <div class="graph-container">
-                <div class="graph-title">XP Progress Over Time</div>
+                <div class="graph-title">XP Progress 2025</div>
                 <svg id="xpChart" viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg">
                     <!-- Grid lines will be generated dynamically -->
                 </svg>

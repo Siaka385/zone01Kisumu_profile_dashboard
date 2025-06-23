@@ -41,7 +41,7 @@ async function updateUserData() {
 
                 let userXp=await fetchUserProfile(userXpQuery)
                 var totalXps = userXp.data.transaction
-                .filter(((t) => t.type === "xp"))
+                .filter((t) => t.type === "xp")
                 .reduce((sum, tx) => {
                       return   sum + tx.amount;
                   }, 0);
@@ -92,13 +92,15 @@ function processXpData(userXp) {
             { month: "Jun", value: 0 }
         ];
     }
-
-    const transactions = userXp.data.transaction;
-
+   
+    var lastyeartotalXp=userXp.data.transaction.filter((x)=> x.type==="xp"  && new Date(x.createdAt).getFullYear() != 2025).reduce((prev,curr)=> prev+curr.amount,0);
+         console.log(lastyeartotalXp)
+    var transactions=userXp.data.transaction.filter((x)=> x.type==="xp"  && new Date(x.createdAt).getFullYear() == 2025)
+        
     // Group transactions by month and sum XP
     const monthlyXP = {};
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
+    
     transactions.forEach(transaction => {
         const date = new Date(transaction.createdAt);
         const monthKey = monthNames[date.getMonth()];
@@ -109,9 +111,12 @@ function processXpData(userXp) {
         monthlyXP[monthKey] += transaction.amount;
     });
 
+
+    
+
     // Convert to array format for chart
     const chartData = [];
-    let cumulativeXP = 0;
+    let cumulativeXP = lastyeartotalXp/1000;
 
     // Get last 6 months of data
     const currentDate = new Date();
@@ -120,7 +125,7 @@ function processXpData(userXp) {
         const monthName = monthNames[monthDate.getMonth()];
 
         const monthXP = monthlyXP[monthName] || 0;
-        cumulativeXP += monthXP;
+        cumulativeXP += (monthXP/1000);
 
         chartData.push({
             month: monthName,
@@ -128,30 +133,12 @@ function processXpData(userXp) {
         });
     }
 
+    console.log(chartData)
+
     return chartData;
 }
 
-// Dynamic data configuration
-const userDatas = {
-    name: "Teddy",
-    age: 20,
-    xpData: [
-        { month: "Jan", value: 50 },
-        { month: "Feb", value: 120 },
-        { month: "Mar", value: 200 },
-        { month: "Apr", value: 280 },
-        { month: "May", value: 350 },
-        { month: "Jun", value: 400 }
-    ],
-    auditData: [
-        { month: "Jan", successful: 1, failed: 1 },
-        { month: "Feb", successful: 3, failed: 0 },
-        { month: "Mar", successful: 1, failed: 1 },
-        { month: "Apr", successful: 4, failed: 0 },
-        { month: "May", successful: 3, failed: 0 },
-        { month: "Jun", successful: 1, failed: 1 }
-    ]
-};
+
 
 function handleLogout() {
     if (confirm('Are you sure you want to log out?')) {
@@ -330,7 +317,7 @@ async function createXPChart() {
     });
 
     // Close area path
-    const lastX = 50 + ((userDatas.xpData.length - 1) * 50);
+    const lastX = 50 + ((processedXpData.length - 1) * 50);
     areaPath += ` L ${lastX} 200 L 50 200 Z`;
 
     // Area under curve
@@ -370,37 +357,6 @@ function animateValue(elementId, start, end, duration) {
 
 
   
-
-// Initialize dashboard
-async function initializeDashboard() {
-    await updateUserData();
-    await createXPChart();
-    await InitiliazeChart();
-
-    const slices = document.querySelectorAll('.pie-slice');
-    slices.forEach((slice, index) => {
-        slice.style.opacity = '0';
-        slice.style.transform = 'scale(0)';
-        slice.style.transformOrigin = '200px 200px';
-        
-        setTimeout(() => {
-            slice.style.transition = 'all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
-            slice.style.opacity = '1';
-            slice.style.transform = 'scale(1)';
-        }, index * 100);
-    });
-
-
-
-    // Add logout event listener
-    const logoutBtn = document.querySelector('.logout');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', handleLogout);
-    }
-}
-
-// Auto-initialize when script loads
-initializeDashboard();
 
 
 
@@ -610,3 +566,35 @@ var auditData = [
 }
 
 
+
+
+// Initialize dashboard
+async function initializeDashboard() {
+    await updateUserData();
+    await createXPChart();
+    await InitiliazeChart();
+
+    const slices = document.querySelectorAll('.pie-slice');
+    slices.forEach((slice, index) => {
+        slice.style.opacity = '0';
+        slice.style.transform = 'scale(0)';
+        slice.style.transformOrigin = '200px 200px';
+        
+        setTimeout(() => {
+            slice.style.transition = 'all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+            slice.style.opacity = '1';
+            slice.style.transform = 'scale(1)';
+        }, index * 100);
+    });
+
+
+
+    // Add logout event listener
+    const logoutBtn = document.querySelector('.logout');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', handleLogout);
+    }
+}
+
+// Auto-initialize when script loads
+initializeDashboard();
