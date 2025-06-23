@@ -1,4 +1,68 @@
-import { fetchUserProfile } from "../query/userdetail.js";
+async function updateUserData() {
+
+
+    import("../query/userdetail.js").then(async({fetchUserProfile})=>{
+
+        const query = `query {
+                        user {
+                            id
+                            login
+                            email
+                            attrs
+                            auditRatio
+
+                        }
+                    }
+                `;
+
+                let userdetail=await fetchUserProfile(query)
+                document.getElementById("username").textContent=`${userdetail.data.user[0].login}`
+                document.getElementById('Name').textContent =`${userdetail.data.user[0].attrs.firstName} ${userdetail.data.user[0].attrs.middleName} ${userdetail.data.user[0].attrs.lastName}`;
+                document.getElementById('useremail').textContent=`${userdetail.data.user[0].attrs.email}`;
+                document.getElementById('usergender').textContent=`${userdetail.data.user[0].attrs.gender}`
+                document.getElementById('phonenumber').textContent=`${userdetail.data.user[0].attrs.phone}`
+
+
+                const userXpQuery = `
+                query {
+                  transaction(where: {
+                    _and: [
+                      { eventId: { _eq: 75 } }
+                    ]
+                  }, order_by: { createdAt: desc }) {
+                    amount
+                    createdAt
+                    path
+                    type
+                  }
+                }
+              `;
+
+
+                let userXp=await fetchUserProfile(userXpQuery)
+                var totalXps = userXp.data.transaction
+                .filter(((t) => t.type === "xp"))
+                .reduce((sum, tx) => {
+                      return   sum + tx.amount;
+                  }, 0);
+                  totalXps=Math.floor(totalXps/1000);
+
+
+
+                  // Update card values with animation
+           animateValue('totalXP', 0, totalXps, 1500);
+
+
+
+           setTimeout(() => {
+               animateValue('totalAudits', 0, userdetail.data.user[0].auditRatio, 1000);
+           }, 500);
+    })
+
+
+}
+
+
 
 // Dynamic import helper for fetchUserProfile
 async function getFetchUserProfile() {
@@ -282,213 +346,8 @@ async function createXPChart() {
     svg.appendChild(path);
 }
 
-function createAuditChart() {
-    const svg = document.getElementById('auditChart');
-    // Calculate cumulative successful audits over time
-    const cumulativeData = [];
-    let cumulative = 0;
-
-    userDatas.auditData.forEach((data, index) => {
-        cumulative += data.successful;
-        cumulativeData.push({
-            month: data.month,
-            value: cumulative
-        });
-    });
-
-    const maxAudits = cumulativeData[cumulativeData.length - 1].value;
-
-    // Clear existing content
-  //  svg.innerHTML = '';
-
-    // Add gradient definition (same as XP chart)
-    const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
-    const gradient = document.createElementNS("http://www.w3.org/2000/svg", "linearGradient");
-    gradient.setAttribute("id", "auditAreaGradient");
-    gradient.setAttribute("x1", "0%");
-    gradient.setAttribute("y1", "0%");
-    gradient.setAttribute("x2", "0%");
-    gradient.setAttribute("y2", "100%");
-
-    const stop1 = document.createElementNS("http://www.w3.org/2000/svg", "stop");
-    stop1.setAttribute("offset", "0%");
-    stop1.setAttribute("style", "stop-color:#4facfe;stop-opacity:0.3");
-
-    const stop2 = document.createElementNS("http://www.w3.org/2000/svg", "stop");
-    stop2.setAttribute("offset", "100%");
-    stop2.setAttribute("style", "stop-color:#4facfe;stop-opacity:0");
-
-    gradient.appendChild(stop1);
-    gradient.appendChild(stop2);
-    defs.appendChild(gradient);
-    //svg.appendChild(defs);
-
-    createGrid(svg, maxAudits);
-
-    // Y-axis labels
-    for (let i = 0; i <= 5; i++) {
-        const value = Math.round((maxAudits / 5) * (5 - i));
-        const y = 40 + (i * 32) + 5;
-        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-        text.setAttribute("x", "45");
-        text.setAttribute("y", y.toString());
-        text.setAttribute("class", "axis-text");
-        text.setAttribute("text-anchor", "end");
-        text.textContent = value.toString();
-        svg.appendChild(text);
-    }
-
-    // X-axis labels and plot points
-    let pathData = "M ";
-    let areaPath = "M ";
-
-    cumulativeData.forEach((data, index) => {
-        const x = 50 + (index * 50);
-        const y = 200 - ((data.value / maxAudits) * 160);
-
-        // X-axis label
-        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-        text.setAttribute("x", x.toString());
-        text.setAttribute("y", "220");
-        text.setAttribute("class", "axis-text");
-        text.setAttribute("text-anchor", "middle");
-        text.textContent = data.month;
-        svg.appendChild(text);
-
-        // Add to path
-        if (index === 0) {
-            pathData += `${x} ${y}`;
-            areaPath += `${x} ${y}`;
-        } else {
-            pathData += ` L ${x} ${y}`;
-            areaPath += ` L ${x} ${y}`;
-        }
-
-        // Data point
-        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-        circle.setAttribute("class", "data-point success-point");
-        circle.setAttribute("cx", x.toString());
-        circle.setAttribute("cy", y.toString());
-        circle.setAttribute("r", "4");
-        svg.appendChild(circle);
-    });
-
-    // Close area path
-    const lastX = 50 + ((cumulativeData.length - 1) * 50);
-    areaPath += ` L ${lastX} 200 L 50 200 Z`;
-
-    // Area under curve
-    const areaElement = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    areaElement.setAttribute("d", areaPath);
-    areaElement.setAttribute("fill", "url(#auditAreaGradient)");
-    svg.appendChild(areaElement);
-
-    // Line
-    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    path.setAttribute("class", "line-chart success-line");
-    path.setAttribute("d", pathData);
-    svg.appendChild(path);
-}
-
-async function updateUserData() {
 
 
-    import("../query/userdetail.js").then(async({fetchUserProfile})=>{
-
-        const query = `query {
-                        user {
-                            id
-                            login
-                            email
-                            attrs
-                            auditRatio
-
-                        }
-                    }
-                `;
-
-                let userdetail=await fetchUserProfile(query)
-                console.log(userdetail)
-                document.getElementById("username").textContent=`${userdetail.data.user[0].login}`
-                document.getElementById('Name').textContent =`${userdetail.data.user[0].attrs.firstName} ${userdetail.data.user[0].attrs.middleName} ${userdetail.data.user[0].attrs.lastName}`;
-                document.getElementById('useremail').textContent=`${userdetail.data.user[0].attrs.email}`;
-                document.getElementById('usergender').textContent=`${userdetail.data.user[0].attrs.gender}`
-                document.getElementById('phonenumber').textContent=`${userdetail.data.user[0].attrs.phone}`
-
-
-                const userXpQuery = `
-                query {
-                  transaction(where: {
-                    _and: [
-                      { eventId: { _eq: 75 } }
-                    ]
-                  }, order_by: { createdAt: desc }) {
-                    amount
-                    createdAt
-                    path
-                    type
-                  }
-                }
-              `;
-
-
-                let userXp=await fetchUserProfile(userXpQuery)
-                const totalXps = userXp.data.transaction.reduce((sum, tx) => {
-                    return sum + tx.amount;
-                  }, 0);;
-
-
-
-                  // Update card values with animation
-           animateValue('totalXP', 0, totalXps, 1500);
-
-
-           const progress=`
-           query{
-              user {
-                    id
-                    skills: transactions(
-                        where: { type: { _like: "skill_%" } }
-                        order_by: [{ amount: desc }]
-                    ) {
-                        type
-                        amount
-                    }
-                }
-
-           }`
-
-
-           // Calculate totals
-        //   const totalSuccessfulAudits = userDatas.auditData.reduce((sum, data) => sum + data.successful, 0);
-              let totalSuccessfulAudits=await fetchUserProfile(progress)
-                var skills=new Set();
-                     for (var i=0;i<totalSuccessfulAudits.data.user[0].skills.length;i++){
-                            skills.add(totalSuccessfulAudits.data.user[0].skills[i].type)
-                     }
-
-                     var skillsAndAmount=new Map();
-               for(const x of skills){
-
-                for (var i=0;i<totalSuccessfulAudits.data.user[0].skills.length;i++){
-                    if(totalSuccessfulAudits.data.user[0].skills[i].type === x){
-                        skillsAndAmount.set(x,totalSuccessfulAudits.data.user[0].skills[i].amount)
-                    }
-                }
-
-               }
-
-
-
-
-
-           setTimeout(() => {
-               animateValue('totalAudits', 0, skills.size, 1000);
-           }, 500);
-    })
-
-
-}
 
 function animateValue(elementId, start, end, duration) {
     const element = document.getElementById(elementId);
@@ -509,10 +368,14 @@ function animateValue(elementId, start, end, duration) {
     requestAnimationFrame(update);
 }
 
+
+  
+
 // Initialize dashboard
 async function initializeDashboard() {
     await updateUserData();
-    createXPChart();
+    await createXPChart();
+    await InitiliazeChart();
 
     const slices = document.querySelectorAll('.pie-slice');
     slices.forEach((slice, index) => {
@@ -541,6 +404,7 @@ initializeDashboard();
 
 
 
+
 function createPieChart(data) {
     const svg = document.getElementById('pieChart');
     const tooltip = document.getElementById('tooltip');
@@ -551,7 +415,7 @@ function createPieChart(data) {
     const radius = 140;
     
     let currentAngle = -90; // Start from top
-    const total = data.reduce((sum, item) => sum + item.value, 0);
+    const total = data.reduce((sum, item) => sum + item.value, 0).toFixed(2);
     
     // Clear existing content
     svg.innerHTML = '';
@@ -700,21 +564,11 @@ function createPieChart(data) {
 
 
 
+
+
 // Initialize the chart
 async function InitiliazeChart() {
-
       // Audit performance data
-  const auditData = [
-    { category: 'Audit Done', value: 0, color: '#4CAF50' },
-    { category: 'Audit Received', value: 0, color: '#2196F3' }
-];
-
-
-
-
-
-
-
   import("../query/userdetail.js").then(async({fetchUserProfile})=>{
     const userXpQuery = `
 query {
@@ -733,16 +587,26 @@ query {
 
 
 let userXp=await fetchUserProfile(userXpQuery)
-const totalXps = userXp.data.transaction.reduce((sum, tx) => {
-    return sum + tx.amount;
-  }, 0);
+const totalXps = userXp.data.transaction;
 
+const done = totalXps
+.filter((t) => t.type === "up")
+.reduce((sum, t) => sum + t.amount, 0);
+
+const received = totalXps
+.filter((t) => t.type === "down")
+.reduce((sum, t) => sum + t.amount, 0)
+
+
+var auditData = [
+    { category: 'Audit Done', value: done, color: '#4CAF50' },
+    { category: 'Audit Received', value: received, color: '#2196F3' }
+  ];
+
+  createPieChart(auditData);
 
   })
 
-
-
-    
-createPieChart(auditData);
 }
+
 

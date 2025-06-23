@@ -31,17 +31,17 @@ export function DashboardComponet(){
                 </div>
                 <div class="cardContent">
                     <div class="value" id="totalXP">0</div>
-                    <div class="label">Total XP Earned</div>
+                    <div class="label">Total XP Earned In Kb</div>
                 </div>
             </div>
             
             <div id="userAudit" class="card audit-progress">
                 <div class="cardHead">
-                    <span>Total acquired Skills</span>
+                    <span>Audit Ratio</span>
                 </div>
                 <div class="cardContent">
                     <div class="value" id="totalAudits">0</div>
-                    <div class="label">Total acquired Skills</div>
+                    <div class="label">Current Audit Ratio</div>
                 </div>
             </div>
         </div>
