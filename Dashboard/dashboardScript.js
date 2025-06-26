@@ -45,7 +45,7 @@ async function updateUserData() {
                 .reduce((sum, tx) => {
                       return   sum + tx.amount;
                   }, 0);
-                  totalXps=Math.floor(totalXps/1000);
+                  totalXps=(totalXps/1000).toFixed(2);
 
 
 
