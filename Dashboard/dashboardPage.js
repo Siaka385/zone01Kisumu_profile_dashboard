@@ -55,7 +55,7 @@ export function DashboardComponet(){
             </div>
             
             <div class="graph-container">
-        <div class="graph-title">Audit Status Overview</div>
+        <div class="graph-title">Project Success Rate</div>
         
         <div class="chart-container">
             <svg id="pieChart" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">

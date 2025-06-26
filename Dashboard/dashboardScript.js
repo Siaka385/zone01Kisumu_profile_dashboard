@@ -371,7 +371,7 @@ function createPieChart(data) {
     const radius = 140;
     
     let currentAngle = -90; // Start from top
-    const total = data.reduce((sum, item) => sum + item.value, 0).toFixed(2);
+    const total = data[0].value+data[1].value;
     
     // Clear existing content
     svg.innerHTML = '';
@@ -506,7 +506,7 @@ function createPieChart(data) {
     centerText.setAttribute('y', centerY - 5);
     centerText.setAttribute('class', 'center-text');
     centerText.setAttribute('font-size', '14');
-    centerText.textContent = 'Total';
+    centerText.textContent = 'Total Projects';
     svg.appendChild(centerText);
     
     const centerValue = document.createElementNS('http://www.w3.org/2000/svg', 'text');
@@ -524,42 +524,37 @@ function createPieChart(data) {
 
 // Initialize the chart
 async function InitiliazeChart() {
-      // Audit performance data
+      // Project success rate data
   import("../query/userdetail.js").then(async({fetchUserProfile})=>{
     const userXpQuery = `
-query {
-  transaction(where: {
-    _and: [
-      { eventId: { _eq: 75 } }
-    ]
-  }, order_by: { createdAt: desc }) {
-    amount
-    createdAt
-    path
-    type
-  }
+query{ 
+   result{
+          grade
+   }
 }
 `;
 
 
 let userXp=await fetchUserProfile(userXpQuery)
-const totalXps = userXp.data.transaction;
 
-const done = totalXps
-.filter((t) => t.type === "up")
-.reduce((sum, t) => sum + t.amount, 0);
+const totalXps = userXp.data.result;
 
-const received = totalXps
-.filter((t) => t.type === "down")
-.reduce((sum, t) => sum + t.amount, 0)
+const pass = totalXps
+.filter((t) => t.grade >=1)
+.length;
 
+const fail = totalXps
+.filter((t) => t.grade < 1)
+.length;
 
-var auditData = [
-    { category: 'Audit Done', value: done, color: '#4CAF50' },
-    { category: 'Audit Received', value: received, color: '#2196F3' }
+console.log(`pass ${pass}`)
+console.log(`fail ${fail}`)
+var projectData = [
+    { category: 'Project Pass', value: pass, color: '#4CAF50' },
+    { category: 'Project Fail', value: fail, color: '#2196F3' }
   ];
 
-  createPieChart(auditData);
+  createPieChart(projectData);
 
   })
 
