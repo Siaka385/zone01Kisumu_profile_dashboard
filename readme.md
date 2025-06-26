@@ -104,6 +104,20 @@ The UI includes:
 }
 ```
 
+## Installation
+1. Clone this repository
+```bash
+git clone https://github.com/Siaka385/zone01Kisumu_profile_dashboard.git
+
+cd zone01Kisumu_profile_dashboard
+```
+
+2. run it locally
+```bash
+python3 -m http.server
+```
+
+
 ## 📦 Hosting
 
 
