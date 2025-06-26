@@ -106,5 +106,6 @@ The UI includes:
 
 ## 📦 Hosting
 
+
 This app is publicly hosted at:
-👉 [your-deployed-link-here]
+[link](https://zone01-kisumu-profile-dashboard-aaxq5ernj-siaka385s-projects.vercel.app/)T

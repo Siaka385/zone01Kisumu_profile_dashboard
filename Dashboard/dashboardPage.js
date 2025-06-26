@@ -54,7 +54,7 @@ export function DashboardComponet(){
                 </svg>
             </div>
             
-            <div class="container-chart">
+            <div class="graph-container">
         <div class="graph-title">Audit Status Overview</div>
         
         <div class="chart-container">
