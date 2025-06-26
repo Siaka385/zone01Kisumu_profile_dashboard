@@ -551,7 +551,7 @@ console.log(`pass ${pass}`)
 console.log(`fail ${fail}`)
 var projectData = [
     { category: 'Project Pass', value: pass, color: '#4CAF50' },
-    { category: 'Project Fail', value: fail, color: '#2196F3' }
+    { category: 'Project Fail', value: fail, color: '#E74C3C' }
   ];
 
   createPieChart(projectData);
