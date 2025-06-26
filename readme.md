@@ -108,4 +108,4 @@ The UI includes:
 
 
 This app is publicly hosted at:
-[link](https://zone01-kisumu-profile-dashboard-aaxq5ernj-siaka385s-projects.vercel.app/)T
+[link](https://zone01-kisumu-profile-dashboard-aaxq5ernj-siaka385s-projects.vercel.app/)
